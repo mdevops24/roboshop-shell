@@ -15,7 +15,6 @@ mvn clean package
 mv target/shipping-1.0.jar shipping.jar
 
 dnf install mysql -y
-
 mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/schema.sql
 mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/master-data.sql
 mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/app-user.sql
