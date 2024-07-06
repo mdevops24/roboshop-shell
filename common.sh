@@ -49,8 +49,8 @@ NODEJS(){
     fi
 
   PRINT Add Application User
-  useradd roboshop
-  rm -rf /app  &>>$LOG_FILE
+  useradd roboshop &>>$LOG_FILE
+  rm -rf /app
   if [ $? -eq 0 ]; then
        echo SUCCESS
     else
