@@ -7,100 +7,63 @@ PRINT(){
   echo ================$*==================
 }
 
+STAT() {
+  if [ $1 -eq 0 ]; then   #only one argument in this file so $? referred as $1
+       echo SUCCESS
+    else
+       echo FAILED
+    fi
+}
 NODEJS(){
   PRINT Disable NodeJS default version
   dnf module disable nodejs -y &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-     echo SUCCESS
-  else
-     echo FAILED
-  fi
+  STAT $?
 
   PRINT Enable NodeJS 20 module
   dnf module enable nodejs:20 -y &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-     echo SUCCESS
-  else
-     echo FAILED
-  fi
+  STAT $?
 
   PRINT Install NodeJS
   dnf install nodejs -y &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-       echo SUCCESS
-    else
-       echo FAILED
-    fi
+  STAT $?
 
   PRINT Cpoy Service file
   cp ${component}.service /etc/systemd/system/${component}.service  &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-       echo SUCCESS
-    else
-       echo FAILED
-    fi
+  STAT $?
 
   PRINT Copy MongoDB repo file
   cp mongo.repo /etc/yum.repos.d/mongo.repo  &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-       echo SUCCESS
-    else
-       echo FAILED
-    fi
+  STAT $?
 
   PRINT Add Application User
   useradd roboshop &>>$LOG_FILE
   rm -rf /app
-  if [ $? -eq 0 ]; then
-       echo SUCCESS
-    else
-       echo FAILED
-    fi
+  STAT $?
 
   PRINT Make /app directory
   mkdir /app  &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-       echo SUCCESS
-    else
-       echo FAILED
-    fi
+  STAT $?
 
   PRINT Create App content
   curl -L -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip  &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-       echo SUCCESS
-    else
-       echo FAILED
-    fi
+  STAT $?
 
   cd /app
   PRINT Extract App content
   unzip /tmp/${component}.zip  &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-       echo SUCCESS
-    else
-       echo FAILED
-    fi
+  STAT $?
 
   cd /app
 
   PRINT Install NodeJS npm dependencies
   npm install  &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-       echo SUCCESS
-    else
-       echo FAILED
-    fi
+  STAT $?
 
   PRINT Start Service
   systemctl daemon-reload  &>>$LOG_FILE
   systemctl enable ${component}  &>>$LOG_FILE
   systemctl start ${component}   &>>$LOG_FILE
-  if [ $? -eq 0 ]; then
-       echo SUCCESS
-    else
-       echo FAILED
-    fi
+  STAT $?
 
 
 }
