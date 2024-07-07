@@ -1,7 +1,7 @@
 source common.sh
 component=frontend
 
-PRINT Disable Nginx default version
+PRINT Disable Nginx default version...
 dnf module disable nginx -y &>>$LOG_FILE
 STAT $?
 
@@ -13,7 +13,7 @@ PRINT Install Nginx
 dnf install nginx -y &>>$LOG_FILE
 STAT $?
 
-PRINT Copy nginx.conf file
+PRINT Copy nginx.conf file...
 cp nginx.conf /etc/nginx/nginx.conf &>>$LOG_FILE
 STAT $?
 
