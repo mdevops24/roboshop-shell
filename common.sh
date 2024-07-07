@@ -1,5 +1,6 @@
 LOG_FILE=/tmp/roboshop.log
 rm -rf $LOG_FILE
+code_dir=$(pwd)
 
 PRINT(){
   echo
@@ -19,7 +20,14 @@ STAT() {
 }
 
 APP_PREREQ(){
-  PRINT Remove old content
+    PRINT Add Application User
+    id roboshop  &>>$LOG_FILE
+      if [ $? -ne 0 ]; then
+         useradd roboshop &>>$LOG_FILE
+      fi
+    STAT $?
+
+    PRINT Remove old content
     rm -rf ${app_path}
     STAT $?
 
@@ -37,6 +45,18 @@ APP_PREREQ(){
     STAT $?
 }
 
+SYSTEMD_SETUP(){
+  PRINT Copy Service file
+    cp ${code_dir}/${component}.service /etc/systemd/system/${component}.service  &>>$LOG_FILE
+    STAT $?
+
+    PRINT Start Service
+    systemctl daemon-reload  &>>$LOG_FILE
+    systemctl enable ${component}  &>>$LOG_FILE
+    systemctl start ${component}   &>>$LOG_FILE
+    STAT $?
+}
+
 NODEJS(){
   PRINT Disable NodeJS default version
   dnf module disable nodejs -y &>>$LOG_FILE
@@ -50,53 +70,35 @@ NODEJS(){
   dnf install nodejs -y &>>$LOG_FILE
   STAT $?
 
-  PRINT Copy Service file
-  cp ${component}.service /etc/systemd/system/${component}.service  &>>$LOG_FILE
-  STAT $?
-
   PRINT Copy MongoDB repo file
   cp mongo.repo /etc/yum.repos.d/mongo.repo  &>>$LOG_FILE
   STAT $?
 
-  PRINT Add Application User
-  id roboshop  &>>$LOG_FILE
-  if [ $? -ne 0 ]; then
-     useradd roboshop &>>$LOG_FILE
-  fi
-  STAT $?
-
   APP_PREREQ
 
-  PRINT Install NodeJS npm dependencies
+  PRINT Download/Install NodeJS npm dependencies
   npm install  &>>$LOG_FILE
   STAT $?
 
-  PRINT Start Service
-  systemctl daemon-reload  &>>$LOG_FILE
-  systemctl enable ${component}  &>>$LOG_FILE
-  systemctl start ${component}   &>>$LOG_FILE
-  STAT $?
+  SYSTEMD_SETUP
 
 }
 
 JAVA(){
-  cp shipping.service /etc/systemd/system/shipping.service
-  dnf install maven -y
-  useradd roboshop
-  rm -rf /app
-  mkdir /app
-  curl -L -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip
-  cd /app
-  unzip /tmp/shipping.zip
-  cd /app
-  mvn clean package
-  mv target/shipping-1.0.jar shipping.jar
+  PRINT Install Java/maven
+  dnf install maven -y  &>>$LOG_FILE
+  STAT $?
+
+  PRINT Download dependencies
+  mvn clean package   &>>$LOG_FILE
+  mv target/shipping-1.0.jar shipping.jar  &>>$LOG_FILE
+  STAT $?
+
   dnf install mysql -y
+
   mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/schema.sql
   mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/master-data.sql
   mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/app-user.sql
-
-
 
   systemctl daemon-reload
   systemctl enable shipping
