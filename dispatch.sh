@@ -8,6 +8,7 @@ STAT $?
 
 APP_PREREQ
 
+cd /app
 PRINT download the dependencies  build the software
 go mod init dispatch  &>>$LOG_FILE
 go get                &>>$LOG_FILE
