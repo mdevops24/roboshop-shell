@@ -29,7 +29,6 @@ NODEJS(){
   PRINT Install NodeJS
   dnf install nodejs -y &>>$LOG_FILE
   STAT $?
-
   PRINT Copy Service file
   cp ${component}.service /etc/systemd/system/${component}.service  &>>$LOG_FILE
   STAT $?
