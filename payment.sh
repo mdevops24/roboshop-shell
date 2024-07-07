@@ -5,6 +5,7 @@ app_path=/app
 
 PRINT Install python3
 dnf install python3 gcc python3-devel -y &>>$LOG_FILE
+STAT $?
 
 APP_PREREQ
 #cp payment.service /etc/systemd/system/payment.service
@@ -18,6 +19,7 @@ APP_PREREQ
 cd /app
 PRINT Install/download the dependencies
 pip3 install -r requirements.txt &>>$LOG_FILE
+STAT $?
 
 SYSTEMD_SETUP
 #systemctl daemon-reload
