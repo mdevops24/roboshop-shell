@@ -2,7 +2,7 @@ LOG_FILE=/tmp/roboshop.log
 rm -rf $LOG_FILE
 code_dir=$(pwd)
 
-PRINT(){
+PRINT() {
   echo
   echo
   echo ================$*==================
@@ -19,7 +19,7 @@ STAT() {
     fi
 }
 
-APP_PREREQ(){
+APP_PREREQ() {
     PRINT Add Application User
     id roboshop  &>>$LOG_FILE
       if [ $? -ne 0 ]; then
@@ -31,11 +31,11 @@ APP_PREREQ(){
     rm -rf ${app_path}
     STAT $?
 
-    PRINT Make /app directory
+    PRINT Create App directory
     mkdir ${app_path}  &>>$LOG_FILE
     STAT $?
 
-    PRINT Create App content
+    PRINT Download Application content
     curl -o  /tmp/${component}.zip  https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip  &>>$LOG_FILE
     STAT $?
 
@@ -45,7 +45,7 @@ APP_PREREQ(){
     STAT $?
 }
 
-SYSTEMD_SETUP(){
+SYSTEMD_SETUP() {
   PRINT Copy Service file
     cp ${code_dir}/${component}.service /etc/systemd/system/${component}.service  &>>$LOG_FILE
     STAT $?
@@ -53,13 +53,13 @@ SYSTEMD_SETUP(){
     PRINT Start Service
     systemctl daemon-reload  &>>$LOG_FILE
     systemctl enable ${component}  &>>$LOG_FILE
-    systemctl start ${component}   &>>$LOG_FILE
+    systemctl restart ${component}   &>>$LOG_FILE
     STAT $?
 }
 
 NODEJS(){
   PRINT Disable NodeJS default version
-  dnf module disable nodejs -y &>>$LOG_FILE
+  dnf module disable nodejs -y  &>>$LOG_FILE
   STAT $?
 
   PRINT Enable NodeJS 20 module
@@ -82,22 +82,25 @@ NODEJS(){
 }
 
 JAVA(){
-  PRINT Install Java/maven
+  PRINT Install Java and Maven
   dnf install maven -y  &>>$LOG_FILE
   STAT $?
+
+  APP_PREREQ
 
   PRINT Download dependencies
   mvn clean package   &>>$LOG_FILE
   mv target/shipping-1.0.jar shipping.jar  &>>$LOG_FILE
+  #mv target/${component}-1.0.jar ${component}.jar  &>>$LOG_FILE
   STAT $?
 
-  SCHEMA_SETUP #mysql schema will be loaded
+  SCHEMA_SETUP   #mysql schema will be loaded
   SYSTEMD_SETUP
 
 }
 
 SCHEMA_SETUP(){
-  if [ "$schema_setup" == "mongo"]; then
+  if [ "$schema_setup" == "mongo" ]; then
     PRINT Copy MongoDB repo file
     cp mongo.repo /etc/yum.repos.d/mongo.repo  &>>$LOG_FILE
     STAT $?
