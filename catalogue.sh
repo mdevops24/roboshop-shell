@@ -1,5 +1,5 @@
 source common.sh
-component=catalogue
+component = catalogue
 
 NODEJS
 
@@ -10,3 +10,4 @@ STAT $?
 PRINT Load master data
 mongosh --host mongo.dev.mdevops24.online </app/db/master-data.js &>>$LOG_FILE
 STAT $?
+
