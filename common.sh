@@ -9,9 +9,9 @@ PRINT(){
 
 STAT() {
   if [ $1 -eq 0 ]; then   #only one argument in this file so $? referred as $1
-       echo SUCCESS
+       echo -e "\e[32mSUCCESS\e[0m"
     else
-       echo FAILED
+       echo -e "\e[31mFAILED\e[0m"
     fi
 }
 NODEJS(){
