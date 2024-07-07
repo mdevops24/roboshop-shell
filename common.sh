@@ -115,7 +115,7 @@ SCHEMA_SETUP(){
     STAT $?
   fi
 
-  if [ "$schema_setup" == "mysql"]; then
+  if [ "$schema_setup" == "mysql" ]; then
     PRINT Install MySQL Client
     dnf install mysql -y  &>>$LOG_FILE
     STAT $?
