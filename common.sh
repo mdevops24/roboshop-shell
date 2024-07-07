@@ -42,14 +42,12 @@ NODEJS(){
   STAT $?
 
   PRINT Make /app directory
-  mkdir /app  #&>>$LOG_FILE
+  mkdir /app  &>>$LOG_FILE
   STAT $?
 
   PRINT Create App content
-  #curl -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip  #&>>$LOG_FILE
-  #STAT $?
   curl -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip  &>>$LOG_FILE
-    STAT $?
+  STAT $?
 
   cd /app
   PRINT Extract App content

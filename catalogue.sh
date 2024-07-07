@@ -1,5 +1,6 @@
 source common.sh
 component=catalogue
+
 NODEJS
 
 PRINT Install mongodb client
