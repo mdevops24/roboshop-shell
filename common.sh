@@ -46,7 +46,7 @@ NODEJS(){
   STAT $?
 
   PRINT Create App content
-  curl -L -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip  &>>$LOG_FILE
+  curl -o /tmp/${component}.zip https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip  &>>$LOG_FILE
   STAT $?
 
   cd /app
