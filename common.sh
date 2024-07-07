@@ -70,16 +70,13 @@ NODEJS(){
   dnf install nodejs -y &>>$LOG_FILE
   STAT $?
 
-  PRINT Copy MongoDB repo file
-  cp mongo.repo /etc/yum.repos.d/mongo.repo  &>>$LOG_FILE
-  STAT $?
-
   APP_PREREQ
 
   PRINT Download/Install NodeJS npm dependencies
   npm install  &>>$LOG_FILE
   STAT $?
 
+  SCHEMA_SETUP  #loads mongo schema
   SYSTEMD_SETUP
 
 }
@@ -94,13 +91,43 @@ JAVA(){
   mv target/shipping-1.0.jar shipping.jar  &>>$LOG_FILE
   STAT $?
 
-  dnf install mysql -y
+  SCHEMA_SETUP #mysql schema will be loaded
+  SYSTEMD_SETUP
 
-  mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/schema.sql
-  mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/master-data.sql
-  mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/app-user.sql
+}
 
-  systemctl daemon-reload
-  systemctl enable shipping
-  systemctl start shipping
+SCHEMA_SETUP(){
+  if [ "$schema_setup" == "mongo"]; then
+    PRINT Copy MongoDB repo file
+    cp mongo.repo /etc/yum.repos.d/mongo.repo  &>>$LOG_FILE
+    STAT $?
+
+    PRINT Install mongodb client
+    dnf install mongodb-mongosh -y &>>$LOG_FILE
+    STAT $?
+
+    PRINT Load master data
+    #mongosh --host mongo.dev.mdevops24.online </app/db/master-data.js &>>$LOG_FILE
+    mongosh --host localhost </app/db/master-data.js &>>$LOG_FILE
+    STAT $?
+  fi
+
+  if [ "$schema_setup" == "mysql"]; then
+    PRINT Install MySQL Client
+    dnf install mysql -y  &>>$LOG_FILE
+    STAT $?
+
+    PRINT Load Schema
+    mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/schema.sql  &>>$LOG_FILE
+    STAT $?
+
+    PRINT Load Master Data
+    mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/master-data.sql  &>>$LOG_FILE
+    STAT $?
+
+    PRINT Create APP users -uroot...
+    mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/app-user.sql  &>>$LOG_FILE
+    STAT $?
+
+  fi
 }
