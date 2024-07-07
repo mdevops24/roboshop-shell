@@ -11,9 +11,9 @@ STAT() {
   if [ $1 -eq 0 ]; then   #only one argument in this file so $? referred as $1
        echo -e "\e[32mSUCCESS\e[0m"  #color code
     else
-       echo -e "\e[31mFAILED\e[0m"
+       echo -e "\e[31mFAILED\e[0mRef. log file for info path : ${LOG_FILE}"
        echo
-       echo "Ref. log file for info path : ${LOG_FILE}"
+       #echo "Ref. log file for info path : ${LOG_FILE}"
        exit $1   # $1 it will print actual exit status of the error
     fi
 }
