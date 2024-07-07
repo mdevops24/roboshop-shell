@@ -1,7 +1,7 @@
 source common.sh
 component=redis
 
-PRINT Disable old redis
+PRINT Disable default redis
 dnf module disable redis -y  &>>$LOG_FILE
 STAT $?
 
