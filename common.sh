@@ -12,6 +12,8 @@ STAT() {
        echo -e "\e[32mSUCCESS\e[0m"  #color code
     else
        echo -e "\e[31mFAILED\e[0m"
+       echo
+       echo "Ref. log file for info path : ${LOG_FILE}"
        exit $1   # $1 it will print actual exit status of the error
     fi
 }
