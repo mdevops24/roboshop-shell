@@ -40,6 +40,9 @@ NODEJS(){
 
   PRINT Add Application User
   useradd roboshop &>>$LOG_FILE
+  STAT $?
+
+  PRINT Remove old content
   rm -rf /app
   STAT $?
 
