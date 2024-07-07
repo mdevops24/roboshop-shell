@@ -17,6 +17,26 @@ STAT() {
        exit $1   # $1 it will print actual exit status of the error
     fi
 }
+
+APP_PREREQ(){
+  PRINT Remove old content
+    rm -rf ${app_path}
+    STAT $?
+
+    PRINT Make /app directory
+    mkdir ${app_path}  &>>$LOG_FILE
+    STAT $?
+
+    PRINT Create App content
+    curl -o  /tmp/${component}.zip  https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip  &>>$LOG_FILE
+    STAT $?
+
+    PRINT Extract App content
+    cd ${app_path}
+    unzip /tmp/${component}.zip  &>>$LOG_FILE
+    STAT $?
+}
+
 NODEJS(){
   PRINT Disable NodeJS default version
   dnf module disable nodejs -y &>>$LOG_FILE
@@ -45,22 +65,7 @@ NODEJS(){
   fi
   STAT $?
 
-  PRINT Remove old content
-  rm -rf /app
-  STAT $?
-
-  PRINT Make /app directory
-  mkdir /app  &>>$LOG_FILE
-  STAT $?
-
-  PRINT Create App content
-  curl -o  /tmp/${component}.zip  https://roboshop-artifacts.s3.amazonaws.com/${component}-v3.zip  &>>$LOG_FILE
-  STAT $?
-
-  cd /app
-  PRINT Extract App content
-  unzip /tmp/${component}.zip  &>>$LOG_FILE
-  STAT $?
+  #####
 
   cd /app
 
