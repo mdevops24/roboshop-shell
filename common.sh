@@ -39,7 +39,10 @@ NODEJS(){
   STAT $?
 
   PRINT Add Application User
-  useradd roboshop &>>$LOG_FILE
+  id roboshop
+  if [$? -ne 0]; then
+     useradd roboshop &>>$LOG_FILE
+  fi
   STAT $?
 
   PRINT Remove old content
