@@ -65,9 +65,7 @@ NODEJS(){
   fi
   STAT $?
 
-  #####
-
-  cd /app
+  APP_PREREQ
 
   PRINT Install NodeJS npm dependencies
   npm install  &>>$LOG_FILE
