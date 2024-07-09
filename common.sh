@@ -121,9 +121,10 @@ SCHEMA_SETUP(){
     STAT $?
 
     for file in schema master-data app-user; do
-    PRINT Load file - $file.sql
-    mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/$file.sql  &>>$LOG_FILE
-    STAT $?
+     PRINT Load file - $file.sql
+     mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/$file.sql  &>>$LOG_FILE
+     STAT $?
+    done
 
 #    PRINT Load Schema
 #    mysql -h mysql.dev.mdevops24.online -uroot -pRoboShop@1 < /app/db/schema.sql  &>>$LOG_FILE
