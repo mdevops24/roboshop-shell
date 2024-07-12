@@ -110,8 +110,8 @@ SCHEMA_SETUP(){
     STAT $?
 
     PRINT Load master data
-    #mongosh --host mongo.dev.mdevops24.online </app/db/master-data.js &>>$LOG_FILE
-    mongosh --host localhost </app/db/master-data.js &>>$LOG_FILE
+    #mongosh --host mongo.dev.mdevops24.online </app/db/master-data.js &>>$LOG_FILE  #if we hv idividual instances use this
+    mongosh --host localhost </app/db/master-data.js &>>$LOG_FILE            #if all components running on same node use localhost
     STAT $?
   fi
 
